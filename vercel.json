@@ -1,8 +1,8 @@
 {
   "redirects": [
     {
-      "source": "/",
-      "destination": "https://ranky.pages.dev",
+      "source": "/(.*)",
+      "destination": "https://ranky.pages.dev/$1",
       "statusCode": 301
     }
   ]
