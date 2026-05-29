@@ -2,7 +2,7 @@
   "redirects": [
     {
       "source": "/(.*)",
-      "destination": "https://ranky.pages.dev/$1",
+      "destination": "https://rankyfnf.cc.cd/$1",
       "statusCode": 301
     }
   ]
