@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Ranky - The Ultimate FNF Visual Mod</title>
+    <meta name="description" content="Enhance your Friday Night Funkin experience with Ranky. A high-performance V-Slice mod featuring dynamic accuracy scaling and RGB BPM synchronization.">
+    <meta name="keywords" content="FNF Mod, Friday Night Funkin, Ranky Mod, V-Slice, Gaming, Rhythm Game">
+    <meta name="author" content="Ranky Team">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Ranky - Visual Grading Experience">
+    <meta property="og:description" content="Native .hxc architecture for FNF. Get real-time feedback on your performance.">
+    <meta property="og:image" content="https://rankyfnf.cc.cd/rankylogoalt.jpeg">
+    <meta property="og:url" content="https://rankyfnf.cc.cd">
+    <meta property="og:site_name" content="Ranky Mod">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Ranky Mod">
+    <meta name="twitter:description" content="The most advanced visual grading mod for FNF.">
+    <meta name="twitter:image" content="https://rankyfnf.cc.cd/rankylogoalt.jpeg">
+
+    <link rel="icon" type="image/jpeg" href="https://rankyfnf.cc.cd/rankylogoalt.jpeg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0084ff;
+            --accent: #00f2ff;
+            --bg-dark: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --warn: #ffaa44;
+            --success: #00ff88;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-dark);
+            background: radial-gradient(circle at top right, #004488 0%, #050505 50%, #002244 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 60px 20px;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .lang-switcher {
+            position: fixed; top: 20px; right: 20px; z-index: 100;
+        }
+
+        .lang-btn {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            color: white; padding: 8px 15px; border-radius: 12px;
+            cursor: pointer; font-weight: 800; backdrop-filter: blur(10px);
+            transition: 0.3s;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            width: 100%; max-width: 500px; text-align: center;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .profile-container {
+            position: relative; display: inline-block; margin-bottom: 20px;
+        }
+
+        .profile-img {
+            width: 130px; height: 130px; border-radius: 40px;
+            object-fit: cover; border: 2px solid var(--glass-border);
+            position: relative; z-index: 2;
+        }
+
+        .profile-glow {
+            position: absolute; inset: 0; background: var(--primary);
+            filter: blur(30px); opacity: 0.4; z-index: 1;
+        }
+
+        h1 {
+            font-size: 3.2rem; font-weight: 800; margin-bottom: 10px;
+            background: linear-gradient(to bottom, #ffffff, #888888);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        #video-container {
+            display: none; width: 100%; margin-bottom: 20px;
+            border-radius: 20px; overflow: hidden;
+            border: 1px solid var(--glass-border);
+            aspect-ratio: 16 / 9; background: #000;
+        }
+
+        .features-box {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 24px; padding: 25px; margin-bottom: 35px;
+            text-align: left; backdrop-filter: blur(10px);
+        }
+
+        .features-box h3 {
+            color: var(--accent); font-size: 1.3rem;
+            margin-bottom: 15px; display: flex; align-items: center; gap: 10px;
+        }
+
+        .feature-item { margin-bottom: 15px; }
+        .feature-title { 
+            display: block; font-weight: 800; font-size: 0.9rem; 
+            text-transform: uppercase; color: var(--primary); margin-bottom: 4px;
+        }
+        .feature-desc { font-size: 0.9rem; color: #bbb; line-height: 1.4; }
+
+        .links-container { display: flex; flex-direction: column; gap: 15px; }
+
+        .link-btn {
+            background: var(--glass); backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border); color: white;
+            text-decoration: none; padding: 18px; border-radius: 20px;
+            font-weight: 700; font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            text-transform: uppercase; cursor: pointer;
+        }
+
+        .link-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--btn-color, var(--primary));
+            box-shadow: 0 0 20px var(--btn-glow, rgba(0, 132, 255, 0.3));
+        }
+
+        .btn-preview { --btn-color: #ff0000; --btn-glow: rgba(255, 0, 0, 0.4); margin-bottom: 10px; }
+        .btn-download { --btn-color: var(--accent); --btn-glow: rgba(0, 242, 255, 0.4); }
+        .btn-collab { --btn-color: var(--success); --btn-glow: rgba(0, 255, 136, 0.3); }
+        .btn-donate { --btn-color: var(--warn); --btn-glow: rgba(255, 170, 68, 0.3); }
+        .btn-twitter { --btn-color: #1DA1F2; --btn-glow: #1DA1F2; }
+
+        .btn-icon { width: 26px; height: 26px; object-fit: contain; }
+
+        .footer-img { 
+            width: 200px; height: auto; margin-top: 40px; 
+            border-radius: 30px; border: 1px solid var(--glass-border);
+            pointer-events: none;
+        }
+
+        .bg-blob {
+            position: fixed; width: 500px; height: 500px; background: var(--primary);
+            filter: blur(120px); opacity: 0.1; z-index: -1; border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lang-switcher">
+        <button class="lang-btn" onclick="toggleLang()" id="btn-lang">EN</button>
+    </div>
+
+    <div class="bg-blob" style="top: -200px; left: -200px;"></div>
+    <div class="bg-blob" style="bottom: -200px; right: -200px;"></div>
+
+    <div class="container">
+        <div class="profile-container">
+            <div class="profile-glow"></div>
+            <img src="https://rankyfnf.cc.cd/rankylogoalt.jpeg" alt="Ranky Logo" class="profile-img">
+        </div>
+
+        <h1>Ranky</h1>
+        <p id="main-sub" style="color: #888; margin-bottom: 25px; font-weight: 600;">The Ultimate Visual Grading Experience</p>
+
+        <button onclick="toggleVideo()" class="link-btn btn-preview" style="width: 100%;">
+            <img src="https://www.google.com/s2/favicons?domain=youtube.com&sz=128" alt="" class="btn-icon">
+            <span id="b0">View what the mod does</span>
+        </button>
+
+        <div id="video-container">
+            <iframe id="yt-player" width="100%" height="100%" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+
+        <div class="features-box">
+            <h3 id="feat-title">✨ Project Intelligence</h3>
+            <div class="feature-item">
+                <span class="feature-title" id="t1">Native .hxc Architecture</span>
+                <p class="feature-desc" id="d1">Built as a high-performance V-Slice module. Zero lag and deep engine integration.</p>
+            </div>
+            <div class="feature-item">
+                <span class="feature-title" id="t2">Dynamic Accuracy Scaling</span>
+                <p class="feature-desc" id="d2">Real-time visual feedback based on your hit-window precision.</p>
+            </div>
+            <div class="feature-item">
+                <span class="feature-title" id="t3">RGB BPM-Sync System</span>
+                <p class="feature-desc" id="d3">Immersive visual effects that pulse with the song's tempo.</p>
+            </div>
+            <div class="feature-item">
+                <span class="feature-title" id="t4">Adaptive Interface (HUD)</span>
+                <p class="feature-desc" id="d4">Smart positioning for Middlescroll and Downscroll layouts.</p>
+            </div>
+        </div>
+
+        <div class="links-container">
+            <a href="/discord" class="link-btn">
+                <img src="https://www.google.com/s2/favicons?domain=discord.com&sz=128" alt="" class="btn-icon">
+                <span id="b_discord">Discord Community</span>
+            </a>
+            
+            <a href="/rankyqr" class="link-btn">
+                <img src="https://rankyfnf.cc.cd/rankyqr.ico" alt="" class="btn-icon" onerror="this.src='https://www.google.com/s2/favicons?domain=rankyfnf.cc.cd&sz=128'">
+                <span id="b_qr">RankyQR Tool</span>
+            </a>
+
+            <a href="https://pay.blink.sv/quasvx" target="_blank" class="link-btn btn-donate">
+                <img src="https://www.google.com/s2/favicons?domain=blink.sv&sz=128" alt="" class="btn-icon">
+                <span id="b_donate">Support the Creators (BTC Lightning)</span>
+            </a>
+
+            <a href="https://x.com/quasvx" target="_blank" class="link-btn btn-twitter">
+                <img src="https://www.google.com/s2/favicons?domain=x.com&sz=128" alt="" class="btn-icon">
+                <span id="b_twitter">Twitter: Quasvx</span>
+            </a>
+
+            <a href="https://x.com/pikachukawaiix5" target="_blank" class="link-btn btn-twitter">
+                <img src="https://www.google.com/s2/favicons?domain=x.com&sz=128" alt="" class="btn-icon">
+                <span id="b_pikapi">Twitter: Pikapi</span>
+            </a>
+
+            <a href="https://gamebanana.com/mods/638963" target="_blank" class="link-btn btn-download">
+                <img src="https://www.google.com/s2/favicons?domain=gamebanana.com&sz=128" alt="" class="btn-icon">
+                <span id="b1">Download Official Mod</span>
+            </a>
+            
+            <a href="https://rankyfnf.cc.cd/form" class="link-btn btn-collab">
+                <img src="https://rankyfnf.cc.cd/formulary.ico" alt="" class="btn-icon">
+                <span id="b3">Register for Collab</span>
+            </a>
+        </div>
+
+        <img src="https://rankyfnf.cc.cd/rankyicon.png" alt="Ranky Icon" class="footer-img">
+    </div>
+
+    <script>
+        let currentLang = 'en';
+        const translations = {
+            en: {
+                sub: "The Ultimate Visual Grading Experience",
+                feat: "✨ Project Intelligence",
+                t1: "Native .hxc Architecture", d1: "Built as a high-performance V-Slice module. Zero lag and deep engine integration.",
+                t2: "Dynamic Accuracy Scaling", d2: "Real-time visual feedback based on your hit-window precision.",
+                t3: "RGB BPM-Sync System", d3: "Immersive visual effects that pulse with the song's tempo.",
+                t4: "Adaptive Interface (HUD)", d4: "Smart positioning for Middlescroll and Downscroll layouts.",
+                b0: "View what the mod does", b1: "Download Official Mod", b3: "Register for Collab", 
+                b_donate: "Support the Creators (BTC Lightning)",
+                b_discord: "Discord Community", b_qr: "RankyQR Tool", 
+                b_twitter: "Twitter: Quasvx", b_pikapi: "Twitter: Pikapi"
+            },
+            es: {
+                sub: "La experiencia definitiva de calificación visual",
+                feat: "✨ Inteligencia del Proyecto",
+                t1: "Arquitectura Nativa .hxc", d1: "Módulo de alto rendimiento para V-Slice. Sin lag e integración profunda.",
+                t2: "Escalado Dinámico", d2: "Feedback visual en tiempo real según tu precisión.",
+                t3: "Sistema RGB Sincronizado", d3: "Efectos visuales que vibran al tempo de la canción.",
+                t4: "Interfaz Adaptable (HUD)", d4: "Posicionamiento inteligente para Middlescroll y Downscroll.",
+                b0: "Ver qué hace el mod", b1: "Descargar Mod Oficial", b3: "Registro para Colaborar",
+                b_donate: "Apoya a los Creadores (BTC Lightning)",
+                b_discord: "Comunidad Discord", b_qr: "Herramienta RankyQR",
+                b_twitter: "Twitter: Quasvx", b_pikapi: "Twitter: Pikapi"
+            }
+        };
+
+        function toggleVideo() {
+            const container = document.getElementById('video-container');
+            const player = document.getElementById('yt-player');
+            if (container.style.display === 'none' || container.style.display === '') {
+                container.style.display = 'block';
+                player.src = "https://www.youtube-nocookie.com/embed/BPwoxU-s3Yg?autoplay=1&rel=0";
+            } else {
+                container.style.display = 'none';
+                player.src = "";
+            }
+        }
+
+        function updateContent() {
+            document.getElementById('main-sub').innerText = translations[currentLang].sub;
+            document.getElementById('feat-title').innerText = translations[currentLang].feat;
+            document.getElementById('t1').innerText = translations[currentLang].t1;
+            document.getElementById('d1').innerText = translations[currentLang].d1;
+            document.getElementById('t2').innerText = translations[currentLang].t2;
+            document.getElementById('d2').innerText = translations[currentLang].d2;
+            document.getElementById('t3').innerText = translations[currentLang].t3;
+            document.getElementById('d3').innerText = translations[currentLang].d3;
+            document.getElementById('t4').innerText = translations[currentLang].t4;
+            document.getElementById('d4').innerText = translations[currentLang].d4;
+            document.getElementById('b0').innerText = translations[currentLang].b0;
+            document.getElementById('b1').innerText = translations[currentLang].b1;
+            document.getElementById('b3').innerText = translations[currentLang].b3;
+            document.getElementById('b_donate').innerText = translations[currentLang].b_donate;
+            document.getElementById('b_discord').innerText = translations[currentLang].b_discord;
+            document.getElementById('b_qr').innerText = translations[currentLang].b_qr;
+            document.getElementById('b_twitter').innerText = translations[currentLang].b_twitter;
+            document.getElementById('b_pikapi').innerText = translations[currentLang].b_pikapi;
+            document.getElementById('btn-lang').innerText = currentLang.toUpperCase();
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === 'en' ? 'es' : 'en';
+            updateContent();
+        }
+
+        window.onload = () => {
+            if (navigator.language.startsWith('es')) currentLang = 'es';
+            updateContent();
+        };
+    </script>
+</body>
+</html>
